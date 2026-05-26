@@ -93,7 +93,7 @@ jobs:
       
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.0
         with:
           name: nightly-e2e-${{ matrix.project }}
           path: |
