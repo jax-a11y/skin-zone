@@ -1,0 +1,205 @@
+name: Nightly Extended Checks
+
+on:
+  schedule:
+    # Run at 2 AM UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ============================================
+  # Full external link validation
+  # ============================================
+  external-links:
+    name: External Link Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Check all links (including external)
+        id: links
+        run: npm run check:links
+        continue-on-error: true
+      
+      - name: External link check summary
+        run: |
+          echo "## External Link Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.links.outcome }}" == "success" ]; then
+            echo "✅ All external links are valid" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Some external links may be broken" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Review the job logs for details. Some failures may be transient." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ============================================
+  # Extended browser matrix E2E tests
+  # ============================================
+  e2e-extended:
+    name: Extended E2E Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium-desktop, chromium-mobile, firefox, webkit]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build documentation
+        run: npm run docs:build
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Run E2E tests
+        run: npx playwright test --project=${{ matrix.project }}
+        continue-on-error: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-e2e-${{ matrix.project }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+
+  # ============================================
+  # Dependency audit
+  # ============================================
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run npm audit
+        id: audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      
+      - name: Security audit summary
+        run: |
+          echo "## Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.audit.outcome }}" == "success" ]; then
+            echo "✅ No high or critical vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Vulnerabilities detected - review npm audit output" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ============================================
+  # Node.js version matrix test
+  # ============================================
+  node-matrix:
+    name: Node.js Compatibility
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['18', '20', '22']
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run quality checks
+        run: npm run ci:quality
+      
+      - name: Build documentation
+        run: npm run docs:build
+
+  # ============================================
+  # Summary notification
+  # ============================================
+  notify:
+    name: Nightly Summary
+    runs-on: ubuntu-latest
+    needs: [external-links, e2e-extended, security-audit, node-matrix]
+    if: always()
+    
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Nightly Extended Checks Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Run Date:** $(date -u +'%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.external-links.result }}" == "success" ]; then
+            echo "| External Links | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| External Links | ⚠️ Issues |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.e2e-extended.result }}" == "success" ]; then
+            echo "| Extended E2E | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Extended E2E | ⚠️ Issues |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.security-audit.result }}" == "success" ]; then
+            echo "| Security Audit | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Security Audit | ⚠️ Issues |" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.node-matrix.result }}" == "success" ]; then
+            echo "| Node.js Matrix | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Node.js Matrix | ⚠️ Issues |" >> $GITHUB_STEP_SUMMARY
+          fi

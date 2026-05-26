@@ -1,0 +1,34 @@
+{
+  "config": {
+    "default": true,
+    // Allow long lines for URLs and code blocks
+    "MD013": {
+      "line_length": 300,
+      "code_blocks": false,
+      "tables": false
+    },
+    // Allow multiple headings with the same content
+    "MD024": {
+      "siblings_only": true
+    },
+    // Allow inline HTML
+    "MD033": false,
+    // Allow bare URLs
+    "MD034": false,
+    // Allow emphasis used instead of heading
+    "MD036": false,
+    // Allow multiple top-level headings
+    "MD025": false,
+    // Allow trailing punctuation in headings
+    "MD026": {
+      "punctuation": ".,;:!"
+    }
+  },
+  "globs": [
+    "**/*.md"
+  ],
+  "ignores": [
+    "node_modules/**",
+    "docs/**"
+  ]
+}
