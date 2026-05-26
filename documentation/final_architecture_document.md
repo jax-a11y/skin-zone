@@ -2,7 +2,10 @@
 
 ## Executive Summary
 
-This document presents the comprehensive architecture for a multi-tenant beauty marketplace platform that integrates ingredients, products, brands, salons, treatments, and therapists into a unified ecosystem. The platform features AppDirect integration for subscription management, a Hyper-Graph Neural Network (HGNN) database providing supply chain insights, and a prominent cheerleader mascot for brand identity and user engagement.
+This document presents the comprehensive architecture for a multi-tenant beauty marketplace platform that integrates ingredients, products, brands, salons, treatments, and therapists into a unified ecosystem. The platform features AppDirect integration for subscription management,
+Shopify app integration for marketplace operations, a Hyper-Graph Neural
+Network (HGNN) database providing supply chain insights, and a prominent
+cheerleader mascot for brand identity and user engagement.
 
 The architecture follows a microservices approach for scalability and flexibility, with specific attention to multi-tenant isolation, security, and performance. The design incorporates the JAX library in a CEO (Cognitive Execution Orchestration) subsystem for advanced graph analytics and machine learning capabilities.
 
@@ -14,7 +17,7 @@ This document consolidates all architectural decisions, entity relationships, in
 2. [System Architecture](#2-system-architecture)
 3. [Entity Model](#3-entity-model)
 4. [HGNN Database Implementation](#4-hgnn-database-implementation)
-5. [AppDirect Integration](#5-appdirect-integration)
+5. [Commerce Platform Integration](#5-appdirect-integration)
 6. [Supply Chain Data Flow](#6-supply-chain-data-flow)
 7. [User Roles and Permissions](#7-user-roles-and-permissions)
 8. [Cheerleader Mascot Integration](#8-cheerleader-mascot-integration)
@@ -33,6 +36,8 @@ The beauty marketplace platform aims to create a comprehensive ecosystem connect
 
 - Multi-tenant architecture supporting different brands and salons
 - Integration with AppDirect for subscription and billing management
+- Shopify app implementation for integrated marketplace operations
+- Custom sales channel editor and topology-aware B2B promo optimization
 - HGNN database implementation for supply chain insights
 - Prominent cheerleader mascot integration across all interfaces
 - Scalable and secure design supporting growth and data protection
@@ -289,6 +294,19 @@ The subscription flow enables monetization of the platform:
 4. Marketplace provisions tenant resources according to plan
 5. Recurring billing is handled by AppDirect
 6. Plan changes and cancellations flow through the same integration
+
+### 5.5 Shopify App Marketplace Extension
+
+The same commerce domain is exposed as a Shopify app to support integrated
+marketplace operations and hyper-local B2B growth workflows:
+
+- **Integrated Marketplace**: Unified product and service commerce in Shopify
+- **Custom Sales Channel Editor**: Tenant-defined channels by region and buyer
+- **Network Topology Designer**: Node and edge mapping for local fulfillment
+- **Promo Optimization**: JAX + HGNN signals for topology-aware promotions
+
+Implementation details are captured in
+`/home/runner/work/skin-zone/skin-zone/architecture/shopify_app_marketplace.md`.
 
 ## 6. Supply Chain Data Flow
 

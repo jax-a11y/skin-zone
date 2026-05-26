@@ -12,5 +12,7 @@ node tests/check-links.js
 # 3. Check for missing image references
 node tests/check-images.js
 
-echo "All documentation validation tests passed!"
+# 4. Validate Shopify app architecture requirements
+node tests/check-shopify-architecture.js
 
+echo "All documentation validation tests passed!"
