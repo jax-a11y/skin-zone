@@ -39,7 +39,7 @@ module.exports = defineConfig({
   // Shared settings for all projects
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: 'http://localhost:3000',
+    baseURL: 'http://localhost:4173',
     
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -82,8 +82,8 @@ module.exports = defineConfig({
   
   // Web server to run before tests
   webServer: {
-    command: 'npm run docs:serve',
-    url: 'http://localhost:3000',
+    command: 'npx serve docs -l 4173',
+    url: 'http://localhost:4173',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

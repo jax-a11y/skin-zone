@@ -19,7 +19,7 @@
     "check:images": "node tests/check-images.js",
     "check:architecture": "node tests/check-shopify-architecture.js && node tests/check-architecture-content.js",
     "docs:build": "node scripts/build-docs.js",
-    "docs:serve": "npx docsify-cli serve docs -p 3000",
+    "docs:serve": "npx serve docs -l 3000",
     "docs:preview": "npm run docs:build && npm run docs:serve",
     "ci:quality": "npm run lint:md && npm run check:images && npm run check:architecture",
     "ci:build": "npm run docs:build",
@@ -30,7 +30,8 @@
     "axios": "^1.6.0",
     "docsify-cli": "^4.4.4",
     "glob": "^10.3.10",
-    "markdownlint-cli2": "^0.12.0"
+    "markdownlint-cli2": "^0.12.0",
+    "serve": "^14.2.1"
   }
 }
 

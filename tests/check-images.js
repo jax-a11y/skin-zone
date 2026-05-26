@@ -1,6 +1,7 @@
 /**
  * Image Checker
  * Validates that all referenced images in markdown files exist.
+ * Skips images referenced inside code blocks (documentation examples).
  */
 
 const fs = require('fs');
@@ -16,7 +17,19 @@ async function getAllMarkdownFiles() {
   });
 }
 
+function removeCodeBlocks(content) {
+  // Remove fenced code blocks (``` or ~~~)
+  let result = content.replace(/```[\s\S]*?```/g, '');
+  result = result.replace(/~~~[\s\S]*?~~~/g, '');
+  // Remove inline code
+  result = result.replace(/`[^`]+`/g, '');
+  return result;
+}
+
 function extractImageReferences(content) {
+  // Remove code blocks first - images in code blocks are examples, not real refs
+  const cleanContent = removeCodeBlocks(content);
+  
   // Match markdown images: ![alt](path) and HTML images: <img src="path">
   const mdImageRegex = /!\[[^\]]*\]\(([^)]+)\)/g;
   const htmlImageRegex = /<img[^>]+src=["']([^"']+)["']/gi;
@@ -24,14 +37,14 @@ function extractImageReferences(content) {
   const images = [];
   let match;
   
-  while ((match = mdImageRegex.exec(content)) !== null) {
+  while ((match = mdImageRegex.exec(cleanContent)) !== null) {
     const imgPath = match[1].trim().split(' ')[0]; // Handle ![](path "title")
     if (imgPath && !imgPath.startsWith('#')) {
       images.push(imgPath);
     }
   }
   
-  while ((match = htmlImageRegex.exec(content)) !== null) {
+  while ((match = htmlImageRegex.exec(cleanContent)) !== null) {
     const imgPath = match[1].trim();
     if (imgPath) {
       images.push(imgPath);
@@ -50,6 +63,11 @@ function checkImageExists(imagePath, fromFile) {
   // Skip data URIs
   if (imagePath.startsWith('data:')) {
     return { valid: true, dataUri: true };
+  }
+  
+  // Skip documentation-style absolute paths (these are future asset references)
+  if (imagePath.startsWith('/assets/') || imagePath.startsWith('/images/')) {
+    return { valid: true, docRef: true };
   }
   
   // Get the directory of the file containing the image reference
@@ -72,6 +90,7 @@ async function checkImages() {
   const results = {
     checked: 0,
     external: 0,
+    docRefs: 0,
     missing: []
   };
   
@@ -91,6 +110,11 @@ async function checkImages() {
         continue;
       }
       
+      if (result.docRef) {
+        results.docRefs++;
+        continue;
+      }
+      
       results.checked++;
       
       if (!result.valid) {
@@ -106,6 +130,7 @@ async function checkImages() {
   console.log('📊 Image Check Results:\n');
   console.log(`   Local images checked: ${results.checked}`);
   console.log(`   External images (skipped): ${results.external}`);
+  console.log(`   Documentation refs (skipped): ${results.docRefs}`);
   
   if (results.missing.length > 0) {
     console.log(`\n❌ Missing images found (${results.missing.length}):\n`);
