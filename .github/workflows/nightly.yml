@@ -6,6 +6,10 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch:
 
+# Minimal permissions at workflow level
+permissions:
+  contents: read
+
 env:
   NODE_VERSION: '20'
 
@@ -16,6 +20,8 @@ jobs:
   external-links:
     name: External Link Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
@@ -54,6 +60,8 @@ jobs:
   e2e-extended:
     name: Extended E2E Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     strategy:
       fail-fast: false
@@ -99,6 +107,8 @@ jobs:
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
@@ -135,6 +145,8 @@ jobs:
   node-matrix:
     name: Node.js Compatibility
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     strategy:
       fail-fast: false
@@ -168,6 +180,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [external-links, e2e-extended, security-audit, node-matrix]
     if: always()
+    permissions: {}
     
     steps:
       - name: Generate summary
