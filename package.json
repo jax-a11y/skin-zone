@@ -1,0 +1,16 @@
+{
+  "name": "skin-zone-docs",
+  "version": "1.0.0",
+  "description": "Documentation for skin-zone",
+  "private": true,
+  "scripts": {
+    "test": "bash tests/validate-docs.sh"
+  },
+  "devDependencies": {
+    "markdownlint-cli": "^0.31.1",
+    "glob": "^7.2.0",
+    "axios": "^0.24.0",
+    "docsify-cli": "^4.4.4"
+  }
+}
+
