@@ -11,6 +11,7 @@ A comprehensive architecture for a multi-tenant beauty marketplace platform that
 
 - **architecture/** - Detailed architectural components
   - Marketplace Architecture
+  - Shopify App Marketplace and Channel Topology Design
   - HGNN Database Schema
   - AppDirect Integration
   - Supply Chain Data Flow
@@ -39,9 +40,11 @@ A comprehensive architecture for a multi-tenant beauty marketplace platform that
 
 1. **Multi-tenant Architecture** - Supporting different brands and salons
 2. **AppDirect Integration** - For subscription and billing management
-3. **HGNN Database** - Providing supply chain insights and recommendations
-4. **Cheerleader Mascot** - Prominent animated mascot across all interfaces
-5. **Responsive Design** - Supporting desktop and mobile devices
+3. **Shopify App** - Integrated marketplace, custom sales channels, and
+   topology-aware B2B promo optimization
+4. **HGNN Database** - Providing supply chain insights and recommendations
+5. **Cheerleader Mascot** - Prominent animated mascot across all interfaces
+6. **Responsive Design** - Supporting desktop and mobile devices
 
 ## Technology Stack
 
