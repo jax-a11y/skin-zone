@@ -220,7 +220,7 @@ jobs:
         uses: actions/download-artifact@v4.1.8
         with:
           name: docs-site
-          path: .
+          path: docs
       
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
