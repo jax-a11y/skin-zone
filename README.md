@@ -65,3 +65,9 @@ A comprehensive architecture for a multi-tenant beauty marketplace platform that
 ## Repository Organization
 
 This repository contains the complete architectural design and technical documentation for the Skin Zone beauty marketplace platform. It serves as a blueprint for implementation and can be used as a reference for development teams.
+
+## Ecosystem
+
+This repository is part of the [SkinTwin-AI ecosystem](https://github.com/jax-a11y/skintwin-ecosystem-design)
+(layer: **governance**, role: **marketplace-design-docs**). See [ECOSYSTEM.md](./ECOSYSTEM.md)
+for its position, contracts, and CI conventions.

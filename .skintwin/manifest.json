@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jax-a11y/skintwin-ecosystem-design/main/schemas/ecosystem-manifest.schema.json",
+  "manifestVersion": "1.0",
+  "github": "jax-a11y/skin-zone",
+  "layer": "governance",
+  "role": "marketplace-design-docs",
+  "description": "Architecture/design documentation for the Skin Zone multi-tenant beauty marketplace: ingredients, products, brands, salons, treatments, therapists (HGNN docs, docsify site).",
+  "designAlias": "business-directory-template (design)",
+  "gatewayPrefix": null,
+  "provides": [],
+  "consumes": [],
+  "events": {
+    "publishes": [],
+    "subscribes": []
+  },
+  "ci": {
+    "workflows": [
+      "ci.yml (markdown lint, consistency checks)"
+    ],
+    "usesReusable": false
+  },
+  "registry": "https://github.com/jax-a11y/skintwin-ecosystem-design/blob/main/registry/ecosystem.json"
+}
